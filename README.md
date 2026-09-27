@@ -28,6 +28,10 @@ Push to the `main` branch. The included GitHub Actions workflow deploys the repo
 
 Expected site URL: `https://jens246.github.io/money-meadow-animation/`
 
+Source repository: `https://github.com/JenS246/money-meadow-animation`
+
+Hosting: GitHub Pages. Backend services: none.
+
 In the repository settings, **Pages → Build and deployment → Source** should be set to **GitHub Actions**.
 
 ## Customization
@@ -40,4 +44,3 @@ In the repository settings, **Pages → Build and deployment → Source** should
 ## Asset note
 
 The background is an AI-generated original image. The character and animation are original SVG/CSS work. The visual direction uses macro photography, handcrafted motion, and tactile miniature-world qualities without copying a named artist’s distinctive style.
-
