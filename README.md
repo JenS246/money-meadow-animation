@@ -7,7 +7,7 @@ The scene combines a macro-photographic cottage garden and hill of coins and bil
 ## How it works
 
 - `index.html` contains the complete layout and CSS animation choreography.
-- `garden-v4.png` is the generated photographic garden plate with distinct roses, peonies, hydrangeas, irises, tulips, lilies, alliums, snapdragons, coneflowers, and other cultivated flower families.
+- `garden-v6.png` is the generated photographic garden plate with distinct cultivated flower families and nine tiny seek-and-find artifacts concealed among petals, leaves, coins, and bills.
 - `traveler-sprite-v3.png` contains twelve generated hand-painted character poses on transparency.
 - A small dependency-free JavaScript timeline blends poses within four stationary scenes and fades the traveler out before each new location.
 - A `prefers-reduced-motion` mode presents a still composition.
