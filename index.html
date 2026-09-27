@@ -3,329 +3,228 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#526d38">
   <title>The Money Meadow</title>
+  <link rel="preload" href="./garden-v2.png" as="image" fetchpriority="high">
+  <link rel="preload" href="./traveler-sprite-v2.png" as="image">
   <style>
-    :root {
-      color-scheme: light;
-      --ink: #162429;
-      --cream: #fff9df;
-      --linen: #f3e9c9;
-      --skin: #b96f4e;
-      --scarf: #df4e35;
-      --loop: 12s;
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-
     body {
+      min-height: 100dvh;
       display: grid;
       place-items: center;
       overflow: hidden;
-      background: #d8e3e7;
+      background: #d8e1cb;
     }
 
-    .money-meadow {
+    @media (prefers-color-scheme: dark) {
+      body { background: #10180e; }
+    }
+
+    .scene {
       position: relative;
-      width: min(100vw, 177.78vh);
+      width: min(100vw, 177.78dvh);
       aspect-ratio: 16 / 9;
       overflow: hidden;
       isolation: isolate;
-      background: #95aa76 url("./money-meadow-background.png") center / cover no-repeat;
+      container-type: size;
+      background: #526d38;
     }
 
-    .money-meadow::after {
-      content: "";
+    .plate,
+    .air,
+    .money-piece {
       position: absolute;
       inset: 0;
-      z-index: 8;
+      width: 100%;
+      height: 100%;
+    }
+
+    .plate {
+      z-index: 0;
+      display: block;
+      object-fit: cover;
+    }
+
+    .air,
+    .money-piece {
       pointer-events: none;
-      background:
-        linear-gradient(90deg, rgb(19 29 18 / .08), transparent 24%, transparent 82%, rgb(26 31 17 / .07)),
-        linear-gradient(0deg, rgb(20 23 12 / .11), transparent 24%);
-      box-shadow: inset 0 0 6vw rgb(35 34 22 / .1);
+      background: url("./garden-v2.png") center / 100% 100% no-repeat;
+      will-change: transform;
     }
 
-    /* Matching overlays make the photographic world breathe. */
-    .paper-edge {
-      position: absolute;
-      z-index: 2;
-      width: var(--w);
-      aspect-ratio: 2.38 / 1;
-      left: var(--x);
-      top: var(--y);
-      transform-origin: 12% 72%;
-      clip-path: polygon(0 25%, 96% 0, 100% 76%, 8% 100%);
-      background:
-        repeating-linear-gradient(8deg, transparent 0 8px, rgb(39 70 47 / .13) 9px 10px),
-        linear-gradient(145deg, #bdc39b, #657c57 56%, #384f38);
-      border: 1px solid rgb(43 63 40 / .3);
-      opacity: .68;
-      mix-blend-mode: multiply;
-      box-shadow: 0 .25vw .3vw rgb(25 26 15 / .2);
-      animation: paper-breeze 4.7s ease-in-out infinite alternate;
+    .air { z-index: 2; }
+
+    .air-left {
+      clip-path: polygon(0 0, 16% 0, 13% 48%, 0 58%);
+      transform-origin: 8% 48%;
+      animation: left-bloom 5.8s cubic-bezier(.45, 0, .55, 1) infinite alternate;
     }
 
-    .paper-edge.one { --x: 57%; --y: 38%; --w: 8.8%; animation: paper-tug var(--loop) ease-in-out infinite; }
-    .paper-edge.two { --x: 75%; --y: 28%; --w: 7.2%; animation-delay: -2.4s; animation-duration: 5.5s; }
-    .paper-edge.three { --x: 25%; --y: 58%; --w: 7.8%; animation-delay: -3.1s; animation-duration: 4.1s; }
+    .air-summit {
+      clip-path: polygon(62% 0, 100% 0, 100% 34%, 75% 30%);
+      transform-origin: 82% 31%;
+      animation: summit-bloom 7.1s cubic-bezier(.45, 0, .55, 1) -2.4s infinite alternate;
+    }
 
-    .wind-flower {
-      --flower: #f2d758;
-      position: absolute;
+    .air-right {
+      clip-path: polygon(78% 45%, 100% 38%, 100% 100%, 84% 100%);
+      transform-origin: 91% 88%;
+      animation: right-bloom 6.4s cubic-bezier(.45, 0, .55, 1) -4.1s infinite alternate;
+    }
+
+    .air-center {
+      clip-path: polygon(53% 20%, 70% 13%, 72% 40%, 55% 44%);
+      transform-origin: 62% 42%;
+      animation: center-bloom 4.9s cubic-bezier(.45, 0, .55, 1) -1.7s infinite alternate;
+    }
+
+    .coin {
       z-index: 3;
-      left: var(--x);
-      top: var(--y);
-      width: clamp(2px, .18vw, 4px);
-      height: var(--h);
-      border-radius: 100% 0 0;
-      background: linear-gradient(90deg, #48632f, #8a9e50);
-      transform-origin: 50% 100%;
-      opacity: .8;
-      filter: saturate(.84);
-      animation: flower-breeze var(--speed) ease-in-out infinite alternate;
+      clip-path: circle(7.4% at 42.2% 55.4%);
+      transform-origin: 42.2% 55.4%;
+      animation: coin-response 14s cubic-bezier(.2, .7, .3, 1) infinite;
     }
 
-    .wind-flower::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: clamp(12px, 1.55vw, 28px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 50% 50%, #6e491e 0 17%, transparent 18%),
-        radial-gradient(ellipse at 50% 12%, var(--flower) 0 22%, transparent 24%),
-        radial-gradient(ellipse at 88% 50%, var(--flower) 0 22%, transparent 24%),
-        radial-gradient(ellipse at 50% 88%, var(--flower) 0 22%, transparent 24%),
-        radial-gradient(ellipse at 12% 50%, var(--flower) 0 22%, transparent 24%);
-      transform: translate(-50%, -45%);
-      filter: drop-shadow(0 1px 1px rgb(0 0 0 / .22));
-    }
-
-    .f1 { --x: 8%; --y: 37%; --h: 15%; --flower: #e64931; --speed: 3.8s; }
-    .f2 { --x: 71%; --y: 19%; --h: 12%; --flower: #f7f0dd; --speed: 4.6s; animation-delay: -1.5s; }
-    .f3 { --x: 86%; --y: 7%; --h: 11%; --flower: #e5452e; --speed: 4.1s; animation-delay: -2.8s; }
-    .f4 { --x: 92%; --y: 38%; --h: 14%; --flower: #e9c426; --speed: 5s; animation-delay: -.9s; }
-
-    .loose-coin {
-      position: absolute;
+    .bill {
       z-index: 4;
-      left: 43.8%;
-      top: 54.5%;
-      width: clamp(17px, 2.3vw, 42px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: max(1px, .13vw) solid rgb(91 70 38 / .72);
-      background: radial-gradient(circle at 34% 30%, #f8dda0 0 12%, #b7843d 45%, #7f5b2f 75%);
-      box-shadow: 0 .22em .2em rgb(25 20 13 / .4);
-      animation: coin-roll var(--loop) ease-in-out infinite;
-    }
-
-    .loose-coin::after {
-      content: "";
-      position: absolute;
-      inset: 27%;
-      border: 1px solid rgb(90 64 29 / .55);
-      border-radius: inherit;
+      clip-path: polygon(46% 37%, 67% 32%, 70% 58%, 48% 60%);
+      transform-origin: 48% 58%;
+      animation: bill-response 14s cubic-bezier(.3, .7, .35, 1) infinite;
     }
 
     .traveler {
       position: absolute;
-      left: 6%;
-      top: 73%;
       z-index: 6;
-      width: clamp(58px, 6.4vw, 116px);
-      aspect-ratio: 120 / 160;
-      transform-origin: 50% 94%;
+      left: 0;
+      top: 0;
+      width: clamp(108px, 13.5cqw, 226px);
+      aspect-ratio: 1;
+      background-image: url("./traveler-sprite-v2.png");
+      background-repeat: no-repeat;
+      background-size: 400% 300%;
+      background-position: 0 0;
       filter:
-        drop-shadow(0 0 2px rgb(255 255 240 / .9))
-        drop-shadow(0 .28em .16em rgb(0 0 0 / .36));
-      animation: climb var(--loop) linear infinite;
-      will-change: left, top, transform, opacity;
+        drop-shadow(0 1px 0 rgb(255 255 246 / .92))
+        drop-shadow(0 .55cqw .34cqw rgb(32 27 17 / .34));
+      will-change: transform, opacity, background-position;
+      animation:
+        journey 14s linear infinite,
+        performance 14s steps(1, end) infinite;
     }
 
-    .traveler svg { display: block; width: 100%; height: 100%; overflow: visible; }
-    .ink { stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-    .skin { fill: var(--skin); }
-    .hair { fill: var(--ink); stroke: none; }
-    .eye { fill: var(--ink); }
-    .coat { fill: var(--cream); }
-    .trouser { fill: var(--linen); }
-    .shoe { fill: var(--ink); }
-    .scarf-line { fill: none; stroke: var(--scarf); stroke-width: 7; stroke-linecap: round; }
-
-    .pose { transform-origin: 57px 82px; animation: pose var(--loop) ease-in-out infinite; }
-    .body { transform-origin: 57px 82px; animation: body-life var(--loop) ease-in-out infinite; }
-    .arm-back { transform-origin: 52px 72px; animation: arm-back var(--loop) ease-in-out infinite; }
-    .arm-front { transform-origin: 65px 71px; animation: arm-front var(--loop) ease-in-out infinite; }
-    .leg-back { transform-origin: 53px 111px; animation: leg-back var(--loop) ease-in-out infinite; }
-    .leg-front { transform-origin: 65px 111px; animation: leg-front var(--loop) ease-in-out infinite; }
-    .scarf-tail { transform-origin: 69px 61px; animation: scarf var(--loop) ease-in-out infinite; }
-    .surprise { opacity: 0; animation: surprise var(--loop) ease-in-out infinite; }
-
-    @keyframes climb {
-      0%   { left: 3%;  top: 75%; transform: rotate(-4deg) scale(.9); opacity: 0; }
-      4%   { opacity: 1; }
-      10%  { left: 13%; top: 70%; transform: rotate(-9deg) scale(.94); }
-      20%  { left: 25%; top: 63%; transform: rotate(-13deg) scale(.98); }
-      30%  { left: 36%; top: 56%; transform: rotate(-14deg) scale(1); }
-      35%  { left: 39%; top: 52%; transform: rotate(-4deg) scale(1.02); }
-      41%  { left: 39%; top: 52%; transform: rotate(8deg) scale(1.02); }
-      46%  { left: 35%; top: 57%; transform: rotate(-20deg) scale(.98); }
-      52%  { left: 45%; top: 46%; transform: rotate(-17deg) scale(1); }
-      60%  { left: 53%; top: 39%; transform: rotate(-11deg) scale(1.02); }
-      66%  { left: 54%; top: 38%; transform: rotate(-4deg) scale(1.02); }
-      72%  { left: 61%; top: 32%; transform: rotate(-16deg) scale(1.03); }
-      82%  { left: 70%; top: 23%; transform: rotate(-13deg) scale(1.04); }
-      92%  { left: 78%; top: 15%; transform: rotate(-3deg) scale(1.05); opacity: 1; }
-      100% { left: 83%; top: 10%; transform: rotate(2deg) scale(1.05); opacity: 0; }
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none;
+      box-shadow: inset 0 0 7cqw rgb(28 35 18 / .13);
+      background: linear-gradient(0deg, rgb(25 31 14 / .08), transparent 24%);
     }
 
-    @keyframes pose {
-      0%, 29%, 50%, 59%, 72%, 100% { transform: rotate(0) translate(0, 0); }
-      34% { transform: rotate(9deg) translate(5px, 10px) scaleY(.88); }
-      40% { transform: rotate(16deg) translate(7px, 13px) scaleY(.84); }
-      45% { transform: rotate(-18deg) translate(-6px, -4px) scaleY(.94); }
-      63% { transform: rotate(10deg) translate(5px, 7px); }
-      67% { transform: rotate(-7deg) translate(-2px, -3px); }
+    @keyframes journey {
+      0%   { transform: translate3d(1cqw, 70cqh, 0) rotate(-3deg) scale(.9); opacity: 0; }
+      4%   { transform: translate3d(5cqw, 68cqh, 0) rotate(-4deg) scale(.92); opacity: 1; }
+      11%  { transform: translate3d(12cqw, 65cqh, 0) rotate(-6deg) scale(.95); }
+      19%  { transform: translate3d(20cqw, 61cqh, 0) rotate(-8deg) scale(.98); }
+      27%  { transform: translate3d(28cqw, 56cqh, 0) rotate(-9deg) scale(1); }
+      31%  { transform: translate3d(33cqw, 51cqh, 0) rotate(-3deg) scale(1.01); }
+      38%  { transform: translate3d(34cqw, 50cqh, 0) rotate(2deg) scale(1.01); }
+      41%  { transform: translate3d(32cqw, 52cqh, 0) rotate(-7deg) scale(1.02); }
+      47%  { transform: translate3d(26cqw, 58cqh, 0) rotate(-16deg) scale(.98); }
+      52%  { transform: translate3d(29cqw, 55cqh, 0) rotate(-7deg) scale(.99); }
+      59%  { transform: translate3d(39cqw, 47cqh, 0) rotate(-9deg) scale(1); }
+      63%  { transform: translate3d(45cqw, 39cqh, 0) rotate(-5deg) scale(1.01); }
+      69%  { transform: translate3d(46cqw, 38cqh, 0) rotate(1deg) scale(1.01); }
+      77%  { transform: translate3d(57cqw, 31cqh, 0) rotate(-8deg) scale(1.02); }
+      84%  { transform: translate3d(65cqw, 24cqh, 0) rotate(-4deg) scale(1.03); }
+      90%  { transform: translate3d(70cqw, 20cqh, 0) rotate(1deg) scale(1.03); }
+      97%  { transform: translate3d(81cqw, 11cqh, 0) rotate(-3deg) scale(1.04); opacity: 1; }
+      100% { transform: translate3d(87cqw, 7cqh, 0) rotate(-1deg) scale(1.04); opacity: 0; }
     }
 
-    @keyframes body-life {
-      0%, 8%, 16%, 24%, 30%, 52%, 60%, 72%, 80%, 88%, 100% { transform: translateY(0) rotate(0); }
-      4%, 12%, 20%, 27%, 56%, 76%, 84%, 94% { transform: translateY(-4px) rotate(-2deg); }
-      35%, 41% { transform: translateY(4px) rotate(7deg); }
-      46% { transform: translateY(-7px) rotate(-8deg); }
-      64% { transform: translateY(3px) rotate(6deg); }
+    @keyframes performance {
+      0%, 8.9% { background-position: 0 0; }
+      9%, 16.9% { background-position: 33.333% 0; }
+      17%, 23.9% { background-position: 0 0; }
+      24%, 29.9% { background-position: 33.333% 0; }
+      30%, 34.9% { background-position: 66.667% 0; }
+      35%, 39.9% { background-position: 100% 0; }
+      40%, 43.9% { background-position: 0 50%; }
+      44%, 48.9% { background-position: 33.333% 50%; }
+      49%, 53.9% { background-position: 66.667% 50%; }
+      54%, 59.9% { background-position: 100% 50%; }
+      60%, 68.9% { background-position: 0 100%; }
+      69%, 77.9% { background-position: 33.333% 100%; }
+      78%, 85.9% { background-position: 66.667% 100%; }
+      86%, 100% { background-position: 100% 100%; }
     }
 
-    @keyframes arm-front {
-      0%, 8%, 16%, 24%, 52%, 60%, 72%, 80%, 88%, 100% { transform: rotate(-29deg); }
-      4%, 12%, 20%, 28%, 56%, 76%, 84%, 94% { transform: rotate(31deg); }
-      34% { transform: rotate(-60deg); }
-      40% { transform: rotate(-82deg) scaleX(1.12); }
-      46% { transform: rotate(72deg); }
-      63%, 66% { transform: rotate(-96deg) scaleX(1.15); }
+    @keyframes coin-response {
+      0%, 34%, 46%, 100% { transform: rotate(0deg); }
+      37% { transform: rotate(-1.4deg) translate3d(-.15cqw, .08cqh, 0); }
+      40% { transform: rotate(1.8deg) translate3d(.2cqw, -.1cqh, 0); }
+      43% { transform: rotate(-.8deg); }
     }
 
-    @keyframes arm-back {
-      0%, 8%, 16%, 24%, 52%, 60%, 72%, 80%, 88%, 100% { transform: rotate(27deg); }
-      4%, 12%, 20%, 28%, 56%, 76%, 84%, 94% { transform: rotate(-28deg); }
-      34%, 40% { transform: rotate(-48deg); }
-      46% { transform: rotate(-74deg); }
-      63%, 66% { transform: rotate(-54deg); }
+    @keyframes bill-response {
+      0%, 58%, 72%, 100% { transform: perspective(40cqw) rotateX(0deg) rotateZ(0deg); }
+      63% { transform: perspective(40cqw) rotateX(4deg) rotateZ(-.5deg) translate3d(-.12cqw, -.25cqh, 0); }
+      67% { transform: perspective(40cqw) rotateX(8deg) rotateZ(1deg) translate3d(.18cqw, -.5cqh, 0); }
+      70% { transform: perspective(40cqw) rotateX(2deg) rotateZ(-.4deg); }
     }
 
-    @keyframes leg-front {
-      0%, 8%, 16%, 24%, 52%, 60%, 72%, 80%, 88%, 100% { transform: rotate(25deg); }
-      4%, 12%, 20%, 28%, 56%, 76%, 84%, 94% { transform: rotate(-27deg); }
-      34%, 40% { transform: rotate(18deg) translateY(5px); }
-      46% { transform: rotate(58deg); }
-      63%, 66% { transform: rotate(13deg); }
+    @keyframes left-bloom {
+      from { transform: rotate(-.18deg) translate3d(-.05cqw, 0, 0); }
+      to { transform: rotate(.34deg) translate3d(.11cqw, -.06cqh, 0); }
     }
 
-    @keyframes leg-back {
-      0%, 8%, 16%, 24%, 52%, 60%, 72%, 80%, 88%, 100% { transform: rotate(-24deg); }
-      4%, 12%, 20%, 28%, 56%, 76%, 84%, 94% { transform: rotate(25deg); }
-      34%, 40% { transform: rotate(-20deg) translateY(5px); }
-      46% { transform: rotate(-48deg); }
-      63%, 66% { transform: rotate(-17deg); }
+    @keyframes summit-bloom {
+      from { transform: rotate(-.12deg); }
+      to { transform: rotate(.24deg) translate3d(.08cqw, -.04cqh, 0); }
     }
 
-    @keyframes scarf {
-      0%, 100% { transform: rotate(-5deg); }
-      20% { transform: rotate(11deg); }
-      40% { transform: rotate(-14deg); }
-      46% { transform: rotate(34deg); }
-      67% { transform: rotate(-22deg); }
-      82% { transform: rotate(13deg); }
+    @keyframes right-bloom {
+      from { transform: rotate(.12deg); }
+      to { transform: rotate(-.28deg) translate3d(-.08cqw, -.04cqh, 0); }
     }
 
-    @keyframes surprise {
-      0%, 38%, 43%, 100% { opacity: 0; transform: translateY(6px) scale(.65); }
-      40%, 42% { opacity: 1; transform: translateY(-3px) scale(1); }
-    }
-
-    @keyframes coin-roll {
-      0%, 39% { transform: translate(0, 0) rotate(0); }
-      43% { transform: translate(1.2vw, 1vw) rotate(130deg); }
-      48% { transform: translate(4vw, 3.2vw) rotate(470deg); }
-      53%, 100% { transform: translate(4.5vw, 3.6vw) rotate(540deg); }
-    }
-
-    @keyframes paper-breeze {
-      from { transform: perspective(180px) rotate(-3deg) rotateX(1deg); }
-      to { transform: perspective(180px) rotate(2deg) rotateX(18deg) translateY(-2px); }
-    }
-
-    @keyframes paper-tug {
-      0%, 58%, 70%, 100% { transform: perspective(180px) rotate(-2deg) rotateX(4deg); }
-      62% { transform: perspective(180px) rotate(-6deg) rotateX(25deg) translate(-2px, -4px); }
-      66% { transform: perspective(180px) rotate(5deg) rotateX(34deg) translate(3px, -7px); }
-    }
-
-    @keyframes flower-breeze {
-      from { transform: rotate(-3deg); }
-      to { transform: rotate(5deg); }
+    @keyframes center-bloom {
+      from { transform: rotate(-.14deg); }
+      to { transform: rotate(.3deg) translate3d(.06cqw, -.06cqh, 0); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
-      .traveler { left: 53%; top: 39%; opacity: 1; transform: rotate(-10deg); }
-      .loose-coin { transform: translate(4.5vw, 3.6vw) rotate(540deg); }
+      .air,
+      .money-piece,
+      .traveler { animation: none; }
+
+      .traveler {
+        transform: translate3d(46cqw, 38cqh, 0);
+        background-position: 66.667% 100%;
+        opacity: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="money-meadow" role="img" aria-label="A small traveler in light clothes explores and climbs a hill made of bills and coins as flowers and loose paper move in the breeze.">
-    <i class="wind-flower f1" aria-hidden="true"></i>
-    <i class="wind-flower f2" aria-hidden="true"></i>
-    <i class="wind-flower f3" aria-hidden="true"></i>
-    <i class="wind-flower f4" aria-hidden="true"></i>
-    <i class="paper-edge one" aria-hidden="true"></i>
-    <i class="paper-edge two" aria-hidden="true"></i>
-    <i class="paper-edge three" aria-hidden="true"></i>
-    <div class="loose-coin" aria-hidden="true"></div>
-
-    <div class="traveler" aria-hidden="true">
-      <svg viewBox="0 0 120 160">
-        <g class="pose">
-          <g class="leg-back">
-            <path class="trouser ink" d="M52 105 42 130l-2 17 13 1 5-18 5-20z"/>
-            <path class="shoe ink" d="M39 145c-6 2-10 5-11 9 7 3 16 2 24-1l1-6z"/>
-          </g>
-          <g class="arm-back">
-            <path class="coat ink" d="M52 68c-9 4-17 13-24 25l9 6 22-19z"/>
-            <circle class="skin ink" cx="33" cy="97" r="5"/>
-          </g>
-          <g class="body">
-            <path class="coat ink" d="M43 64c8-7 24-8 32 0l4 47c-14 8-29 8-43 0z"/>
-            <path class="trouser ink" d="M44 102c10 4 20 4 31 0l4 12c-14 6-27 6-40 0z"/>
-            <circle class="skin ink" cx="58" cy="42" r="19"/>
-            <path class="hair" d="M39 42c0-17 9-28 22-28 12 0 21 9 21 23-6-8-13-11-23-10-8 1-14 6-17 16z"/>
-            <path class="hair" d="M44 22c-2-11 8-18 17-11 5 4 2 10-1 14z"/>
-            <circle class="eye" cx="66" cy="41" r="2.2"/>
-            <path class="ink" fill="none" d="M69 48c3 1 5 0 7-2"/>
-            <path class="scarf-line" d="M42 60c12 7 26 7 38 0"/>
-          </g>
-          <g class="scarf-tail">
-            <path class="scarf-line" d="M74 63c14 8 20 15 23 26"/>
-          </g>
-          <g class="leg-front">
-            <path class="trouser ink" d="M65 106 66 132l7 15 13-4-5-18-5-17z"/>
-            <path class="shoe ink" d="M72 145c1 5 6 8 14 10 5-4 3-8-2-13z"/>
-          </g>
-          <g class="arm-front">
-            <path class="coat ink" d="M69 68c11 6 19 14 26 25l-9 7-24-21z"/>
-            <circle class="skin ink" cx="91" cy="97" r="5"/>
-          </g>
-          <g class="surprise">
-            <path class="ink" fill="none" d="M89 16c8-9 18-2 14 7-2 5-8 5-8 11M95 43h.1"/>
-          </g>
-        </g>
-      </svg>
-    </div>
+  <main class="scene" role="img" aria-label="An illustrated woman curiously climbs a hill of coins and paper money in a dense flowering garden.">
+    <img class="plate" src="./garden-v2.png" alt="" width="1672" height="941" fetchpriority="high">
+    <div class="air air-left" aria-hidden="true"></div>
+    <div class="air air-center" aria-hidden="true"></div>
+    <div class="air air-summit" aria-hidden="true"></div>
+    <div class="air air-right" aria-hidden="true"></div>
+    <div class="money-piece coin" aria-hidden="true"></div>
+    <div class="money-piece bill" aria-hidden="true"></div>
+    <div class="traveler" aria-hidden="true"></div>
   </main>
 </body>
 </html>
