@@ -2,14 +2,14 @@
 
 A short, responsive homepage animation that invites viewers to see money as a physical object rather than only as transactional value.
 
-The scene combines a macro-photographic cottage garden and hill of coins and bills with a frame-by-frame illustrated traveler. She climbs, braces against a large coin, slips, recovers, tugs at a lifting bill, and continues uphill while flowers and loose paper move softly in the wind.
+The scene combines a macro-photographic cottage garden and hill of coins and bills with a frame-by-frame illustrated traveler. She appears in four short, fixed-location vignettes: discovering the money path, testing a large coin, tugging at a lifting bill, and pausing near the summit. She disappears between scenes, creating a gentle stop-motion rhythm instead of sliding mechanically across the landscape.
 
 ## How it works
 
 - `index.html` contains the complete layout and CSS animation choreography.
-- `garden-v3.png` is the generated photographic garden plate with denser planting and more convincing currency materials.
+- `garden-v4.png` is the generated photographic garden plate with distinct roses, peonies, hydrangeas, irises, tulips, lilies, alliums, snapdragons, coneflowers, and other cultivated flower families.
 - `traveler-sprite-v3.png` contains twelve generated hand-painted character poses on transparency.
-- A small dependency-free JavaScript timeline blends poses and varies pace through walking, contact, falling, recovery, tugging, and climbing.
+- A small dependency-free JavaScript timeline blends poses within four stationary scenes and fades the traveler out before each new location.
 - A `prefers-reduced-motion` mode presents a still composition.
 - `.github/workflows/pages.yml` publishes the site to GitHub Pages.
 
@@ -37,8 +37,8 @@ In the repository settings, **Pages → Build and deployment → Source** should
 
 ## Customization
 
-- Change `--loop` in `index.html` to adjust the full animation duration.
-- Edit the `keys` array near the end of `index.html` to change the traveler’s route, pose sequence, timing, easing, rotation, or scale.
+- Change `duration` near the end of `index.html` to adjust the full animation duration.
+- Edit the `vignettes` array to change the traveler’s fixed locations, pose sequences, timing, rotation, or scale.
 - Edit the coin, bill, and flower keyframes to change environmental responses.
 - The scene contains no visible text; its meaning is communicated through movement.
 
