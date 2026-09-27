@@ -26,7 +26,7 @@ Then visit `http://localhost:8000`.
 
 Push to the `main` branch. The included GitHub Actions workflow deploys the repository to GitHub Pages.
 
-Expected site URL: `https://jens246.github.io/money-meadow-animation/`
+Public site: `https://jens246.github.io/money-meadow-animation/`
 
 Source repository: `https://github.com/JenS246/money-meadow-animation`
 
