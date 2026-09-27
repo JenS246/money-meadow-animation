@@ -7,9 +7,9 @@ The scene combines a macro-photographic cottage garden and hill of coins and bil
 ## How it works
 
 - `index.html` contains the complete layout and CSS animation choreography.
-- `garden-v2.png` is the generated photographic garden plate.
-- `traveler-sprite-v2.png` contains twelve generated hand-painted character poses on transparency.
-- The animation uses no JavaScript and has no runtime dependencies.
+- `garden-v3.png` is the generated photographic garden plate with denser planting and more convincing currency materials.
+- `traveler-sprite-v3.png` contains twelve generated hand-painted character poses on transparency.
+- A small dependency-free JavaScript timeline blends poses and varies pace through walking, contact, falling, recovery, tugging, and climbing.
 - A `prefers-reduced-motion` mode presents a still composition.
 - `.github/workflows/pages.yml` publishes the site to GitHub Pages.
 
@@ -38,8 +38,8 @@ In the repository settings, **Pages → Build and deployment → Source** should
 ## Customization
 
 - Change `--loop` in `index.html` to adjust the full animation duration.
-- Edit the `journey` keyframes to change the traveler’s route.
-- Edit the performance, coin, bill, and flower keyframes to change individual movements.
+- Edit the `keys` array near the end of `index.html` to change the traveler’s route, pose sequence, timing, easing, rotation, or scale.
+- Edit the coin, bill, and flower keyframes to change environmental responses.
 - The scene contains no visible text; its meaning is communicated through movement.
 
 ## Asset note

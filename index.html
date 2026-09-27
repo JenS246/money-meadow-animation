@@ -5,16 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#526d38">
   <title>The Money Meadow</title>
-  <link rel="preload" href="./garden-v2.png" as="image" fetchpriority="high">
-  <link rel="preload" href="./traveler-sprite-v2.png" as="image">
+  <link rel="preload" href="./garden-v3.png" as="image" fetchpriority="high">
+  <link rel="preload" href="./traveler-sprite-v3.png" as="image">
   <style>
     * { box-sizing: border-box; }
-
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
-    }
+    html, body { min-height: 100%; margin: 0; }
 
     body {
       min-height: 100dvh;
@@ -56,47 +51,47 @@
     .air,
     .money-piece {
       pointer-events: none;
-      background: url("./garden-v2.png") center / 100% 100% no-repeat;
+      background: url("./garden-v3.png") center / 100% 100% no-repeat;
       will-change: transform;
     }
 
     .air { z-index: 2; }
 
     .air-left {
-      clip-path: polygon(0 0, 16% 0, 13% 48%, 0 58%);
-      transform-origin: 8% 48%;
-      animation: left-bloom 5.8s cubic-bezier(.45, 0, .55, 1) infinite alternate;
+      clip-path: polygon(0 0, 16% 0, 13% 54%, 0 61%);
+      transform-origin: 8% 53%;
+      animation: left-bloom 6.2s cubic-bezier(.45, 0, .55, 1) infinite alternate;
     }
 
     .air-summit {
-      clip-path: polygon(62% 0, 100% 0, 100% 34%, 75% 30%);
-      transform-origin: 82% 31%;
-      animation: summit-bloom 7.1s cubic-bezier(.45, 0, .55, 1) -2.4s infinite alternate;
+      clip-path: polygon(55% 0, 100% 0, 100% 37%, 72% 33%);
+      transform-origin: 82% 34%;
+      animation: summit-bloom 7.4s cubic-bezier(.45, 0, .55, 1) -2.4s infinite alternate;
     }
 
     .air-right {
-      clip-path: polygon(78% 45%, 100% 38%, 100% 100%, 84% 100%);
-      transform-origin: 91% 88%;
-      animation: right-bloom 6.4s cubic-bezier(.45, 0, .55, 1) -4.1s infinite alternate;
+      clip-path: polygon(76% 43%, 100% 35%, 100% 100%, 82% 100%);
+      transform-origin: 92% 90%;
+      animation: right-bloom 6.7s cubic-bezier(.45, 0, .55, 1) -4.1s infinite alternate;
     }
 
     .air-center {
-      clip-path: polygon(53% 20%, 70% 13%, 72% 40%, 55% 44%);
-      transform-origin: 62% 42%;
-      animation: center-bloom 4.9s cubic-bezier(.45, 0, .55, 1) -1.7s infinite alternate;
+      clip-path: polygon(46% 18%, 72% 10%, 75% 44%, 48% 51%);
+      transform-origin: 60% 50%;
+      animation: center-bloom 5.3s cubic-bezier(.45, 0, .55, 1) -1.7s infinite alternate;
     }
 
     .coin {
       z-index: 3;
-      clip-path: circle(7.4% at 42.2% 55.4%);
-      transform-origin: 42.2% 55.4%;
+      clip-path: circle(6.7% at 43.5% 58%);
+      transform-origin: 43.5% 58%;
       animation: coin-response 14s cubic-bezier(.2, .7, .3, 1) infinite;
     }
 
     .bill {
       z-index: 4;
-      clip-path: polygon(46% 37%, 67% 32%, 70% 58%, 48% 60%);
-      transform-origin: 48% 58%;
+      clip-path: polygon(50% 37%, 77% 35%, 80% 59%, 51% 61%);
+      transform-origin: 51% 59%;
       animation: bill-response 14s cubic-bezier(.3, .7, .35, 1) infinite;
     }
 
@@ -107,18 +102,24 @@
       top: 0;
       width: clamp(108px, 13.5cqw, 226px);
       aspect-ratio: 1;
-      background-image: url("./traveler-sprite-v2.png");
-      background-repeat: no-repeat;
-      background-size: 400% 300%;
-      background-position: 0 0;
+      transform: translate3d(46cqw, 38cqh, 0);
+      transform-origin: 50% 86%;
       filter:
-        drop-shadow(0 1px 0 rgb(255 255 246 / .92))
-        drop-shadow(0 .55cqw .34cqw rgb(32 27 17 / .34));
-      will-change: transform, opacity, background-position;
-      animation:
-        journey 14s linear infinite,
-        performance 14s steps(1, end) infinite;
+        drop-shadow(0 1px 0 rgb(255 255 246 / .94))
+        drop-shadow(0 .52cqw .32cqw rgb(32 27 17 / .32));
+      will-change: transform, opacity;
     }
+
+    .pose-layer {
+      position: absolute;
+      inset: 0;
+      background: url("./traveler-sprite-v3.png") 0 0 / 400% 300% no-repeat;
+      opacity: 0;
+      transition: opacity 90ms cubic-bezier(.2, .7, .3, 1);
+      will-change: opacity, background-position;
+    }
+
+    .pose-layer:first-child { opacity: 1; }
 
     .scene::after {
       content: "";
@@ -126,105 +127,178 @@
       inset: 0;
       z-index: 9;
       pointer-events: none;
-      box-shadow: inset 0 0 7cqw rgb(28 35 18 / .13);
-      background: linear-gradient(0deg, rgb(25 31 14 / .08), transparent 24%);
-    }
-
-    @keyframes journey {
-      0%   { transform: translate3d(1cqw, 70cqh, 0) rotate(-3deg) scale(.9); opacity: 0; }
-      4%   { transform: translate3d(5cqw, 68cqh, 0) rotate(-4deg) scale(.92); opacity: 1; }
-      11%  { transform: translate3d(12cqw, 65cqh, 0) rotate(-6deg) scale(.95); }
-      19%  { transform: translate3d(20cqw, 61cqh, 0) rotate(-8deg) scale(.98); }
-      27%  { transform: translate3d(28cqw, 56cqh, 0) rotate(-9deg) scale(1); }
-      31%  { transform: translate3d(33cqw, 51cqh, 0) rotate(-3deg) scale(1.01); }
-      38%  { transform: translate3d(34cqw, 50cqh, 0) rotate(2deg) scale(1.01); }
-      41%  { transform: translate3d(32cqw, 52cqh, 0) rotate(-7deg) scale(1.02); }
-      47%  { transform: translate3d(26cqw, 58cqh, 0) rotate(-16deg) scale(.98); }
-      52%  { transform: translate3d(29cqw, 55cqh, 0) rotate(-7deg) scale(.99); }
-      59%  { transform: translate3d(39cqw, 47cqh, 0) rotate(-9deg) scale(1); }
-      63%  { transform: translate3d(45cqw, 39cqh, 0) rotate(-5deg) scale(1.01); }
-      69%  { transform: translate3d(46cqw, 38cqh, 0) rotate(1deg) scale(1.01); }
-      77%  { transform: translate3d(57cqw, 31cqh, 0) rotate(-8deg) scale(1.02); }
-      84%  { transform: translate3d(65cqw, 24cqh, 0) rotate(-4deg) scale(1.03); }
-      90%  { transform: translate3d(70cqw, 20cqh, 0) rotate(1deg) scale(1.03); }
-      97%  { transform: translate3d(81cqw, 11cqh, 0) rotate(-3deg) scale(1.04); opacity: 1; }
-      100% { transform: translate3d(87cqw, 7cqh, 0) rotate(-1deg) scale(1.04); opacity: 0; }
-    }
-
-    @keyframes performance {
-      0%, 8.9% { background-position: 0 0; }
-      9%, 16.9% { background-position: 33.333% 0; }
-      17%, 23.9% { background-position: 0 0; }
-      24%, 29.9% { background-position: 33.333% 0; }
-      30%, 34.9% { background-position: 66.667% 0; }
-      35%, 39.9% { background-position: 100% 0; }
-      40%, 43.9% { background-position: 0 50%; }
-      44%, 48.9% { background-position: 33.333% 50%; }
-      49%, 53.9% { background-position: 66.667% 50%; }
-      54%, 59.9% { background-position: 100% 50%; }
-      60%, 68.9% { background-position: 0 100%; }
-      69%, 77.9% { background-position: 33.333% 100%; }
-      78%, 85.9% { background-position: 66.667% 100%; }
-      86%, 100% { background-position: 100% 100%; }
+      box-shadow: inset 0 0 7cqw rgb(28 35 18 / .12);
+      background: linear-gradient(0deg, rgb(25 31 14 / .07), transparent 24%);
     }
 
     @keyframes coin-response {
-      0%, 34%, 46%, 100% { transform: rotate(0deg); }
-      37% { transform: rotate(-1.4deg) translate3d(-.15cqw, .08cqh, 0); }
-      40% { transform: rotate(1.8deg) translate3d(.2cqw, -.1cqh, 0); }
-      43% { transform: rotate(-.8deg); }
+      0%, 25%, 33%, 100% { transform: rotate(0deg); }
+      27% { transform: rotate(-.7deg) translate3d(-.08cqw, .04cqh, 0); }
+      29% { transform: rotate(1.1deg) translate3d(.1cqw, -.05cqh, 0); }
+      31% { transform: rotate(-.35deg); }
     }
 
     @keyframes bill-response {
-      0%, 58%, 72%, 100% { transform: perspective(40cqw) rotateX(0deg) rotateZ(0deg); }
-      63% { transform: perspective(40cqw) rotateX(4deg) rotateZ(-.5deg) translate3d(-.12cqw, -.25cqh, 0); }
-      67% { transform: perspective(40cqw) rotateX(8deg) rotateZ(1deg) translate3d(.18cqw, -.5cqh, 0); }
-      70% { transform: perspective(40cqw) rotateX(2deg) rotateZ(-.4deg); }
+      0%, 51%, 63%, 100% { transform: perspective(40cqw) rotateX(0deg) rotateZ(0deg); }
+      54% { transform: perspective(40cqw) rotateX(3deg) rotateZ(-.3deg) translate3d(-.08cqw, -.14cqh, 0); }
+      58% { transform: perspective(40cqw) rotateX(7deg) rotateZ(.65deg) translate3d(.1cqw, -.38cqh, 0); }
+      61% { transform: perspective(40cqw) rotateX(2deg) rotateZ(-.2deg); }
     }
 
     @keyframes left-bloom {
-      from { transform: rotate(-.18deg) translate3d(-.05cqw, 0, 0); }
-      to { transform: rotate(.34deg) translate3d(.11cqw, -.06cqh, 0); }
+      from { transform: rotate(-.14deg) translate3d(-.04cqw, 0, 0); }
+      to { transform: rotate(.27deg) translate3d(.08cqw, -.04cqh, 0); }
     }
 
     @keyframes summit-bloom {
-      from { transform: rotate(-.12deg); }
-      to { transform: rotate(.24deg) translate3d(.08cqw, -.04cqh, 0); }
+      from { transform: rotate(-.1deg); }
+      to { transform: rotate(.2deg) translate3d(.06cqw, -.03cqh, 0); }
     }
 
     @keyframes right-bloom {
-      from { transform: rotate(.12deg); }
-      to { transform: rotate(-.28deg) translate3d(-.08cqw, -.04cqh, 0); }
+      from { transform: rotate(.1deg); }
+      to { transform: rotate(-.22deg) translate3d(-.06cqw, -.03cqh, 0); }
     }
 
     @keyframes center-bloom {
-      from { transform: rotate(-.14deg); }
-      to { transform: rotate(.3deg) translate3d(.06cqw, -.06cqh, 0); }
+      from { transform: rotate(-.11deg); }
+      to { transform: rotate(.24deg) translate3d(.05cqw, -.04cqh, 0); }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .air,
-      .money-piece,
-      .traveler { animation: none; }
+      .money-piece { animation: none; }
 
-      .traveler {
-        transform: translate3d(46cqw, 38cqh, 0);
-        background-position: 66.667% 100%;
-        opacity: 1;
-      }
+      .pose-layer { transition: none; }
     }
   </style>
 </head>
 <body>
-  <main class="scene" role="img" aria-label="An illustrated woman curiously climbs a hill of coins and paper money in a dense flowering garden.">
-    <img class="plate" src="./garden-v2.png" alt="" width="1672" height="941" fetchpriority="high">
+  <main class="scene" role="img" aria-label="An illustrated woman curiously climbs a hill of realistic coins and paper currency in a dense flowering garden.">
+    <img class="plate" src="./garden-v3.png" alt="" width="1672" height="941" fetchpriority="high">
     <div class="air air-left" aria-hidden="true"></div>
     <div class="air air-center" aria-hidden="true"></div>
     <div class="air air-summit" aria-hidden="true"></div>
     <div class="air air-right" aria-hidden="true"></div>
     <div class="money-piece coin" aria-hidden="true"></div>
     <div class="money-piece bill" aria-hidden="true"></div>
-    <div class="traveler" aria-hidden="true"></div>
+    <div class="traveler" aria-hidden="true">
+      <div class="pose-layer"></div>
+      <div class="pose-layer"></div>
+    </div>
   </main>
+
+  <script>
+    (() => {
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+      const traveler = document.querySelector(".traveler");
+      const layers = [...document.querySelectorAll(".pose-layer")];
+      const positions = [
+        "0 0", "33.333% 0", "66.667% 0", "100% 0",
+        "0 50%", "33.333% 50%", "66.667% 50%", "100% 50%",
+        "0 100%", "33.333% 100%", "66.667% 100%", "100% 100%"
+      ];
+      const duration = 14;
+      const keys = [
+        { t: 0, x: -6, y: 70, r: -2, s: .9, frame: 0, mode: "walk", ease: "linear" },
+        { t: 2.75, x: 28, y: 55, r: -8, s: .98, frame: 1, ease: "out" },
+        { t: 3.2, x: 32, y: 52, r: -4, s: 1, frame: 2, ease: "inout" },
+        { t: 3.65, x: 34, y: 50, r: 1, s: 1.01, frame: 3, ease: "out" },
+        { t: 4.3, x: 34, y: 50, r: 2, s: 1.01, frame: 3, ease: "in" },
+        { t: 4.55, x: 32, y: 52, r: -8, s: 1.02, frame: 4, ease: "out" },
+        { t: 5.05, x: 26, y: 57, r: -17, s: .98, frame: 5, ease: "out" },
+        { t: 5.45, x: 25, y: 58, r: -12, s: .98, frame: 5, ease: "inout" },
+        { t: 5.8, x: 28, y: 55, r: -6, s: .99, frame: 6, ease: "out" },
+        { t: 6.2, x: 34, y: 50, r: -8, s: 1, frame: 7, ease: "inout" },
+        { t: 7.1, x: 43, y: 42, r: -8, s: 1, frame: 7, ease: "out" },
+        { t: 7.45, x: 46, y: 38, r: -4, s: 1.01, frame: 8, ease: "inout" },
+        { t: 8.2, x: 46, y: 38, r: 1, s: 1.01, frame: 8, ease: "out" },
+        { t: 8.6, x: 48, y: 37, r: -2, s: 1.01, frame: 9, ease: "inout" },
+        { t: 9.4, x: 57, y: 31, r: -7, s: 1.02, frame: 9, ease: "inout" },
+        { t: 10, x: 64, y: 25, r: -5, s: 1.03, frame: 9, ease: "out" },
+        { t: 10.3, x: 66, y: 23, r: 0, s: 1.03, frame: 10, ease: "inout" },
+        { t: 11.1, x: 66, y: 23, r: 1, s: 1.03, frame: 10, ease: "out" },
+        { t: 11.4, x: 69, y: 20, r: -3, s: 1.03, frame: 11, mode: "walk-end", ease: "linear" },
+        { t: 14, x: 89, y: 6, r: -3, s: 1.04, frame: 11, ease: "linear" }
+      ];
+
+      let active = 0;
+      let currentFrame = -1;
+      let start = performance.now();
+
+      const ease = (kind, value) => {
+        if (kind === "in") return value * value * value;
+        if (kind === "out") return 1 - Math.pow(1 - value, 3);
+        if (kind === "inout") return value < .5
+          ? 4 * value * value * value
+          : 1 - Math.pow(-2 * value + 2, 3) / 2;
+        return value;
+      };
+
+      const mix = (a, b, value) => a + (b - a) * value;
+
+      const setFrame = (frame, immediate = false) => {
+        if (frame === currentFrame) return;
+        const next = 1 - active;
+        layers[next].style.backgroundPosition = positions[frame];
+        if (immediate) layers[next].style.transition = "none";
+        layers[next].style.opacity = "1";
+        layers[active].style.opacity = "0";
+        if (immediate) requestAnimationFrame(() => layers[next].style.removeProperty("transition"));
+        active = next;
+        currentFrame = frame;
+      };
+
+      const renderStill = () => {
+        traveler.style.transform = "translate3d(62cqw, 24cqh, 0) rotate(0deg) scale(1.03)";
+        traveler.style.opacity = "1";
+        setFrame(10, true);
+      };
+
+      const tick = now => {
+        if (reduced.matches) {
+          renderStill();
+          return;
+        }
+
+        const elapsed = ((now - start) / 1000) % duration;
+        let index = keys.findIndex((key, i) => elapsed >= key.t && elapsed < keys[i + 1]?.t);
+        if (index < 0) index = keys.length - 2;
+        const a = keys[index];
+        const b = keys[index + 1];
+        const raw = Math.min(1, Math.max(0, (elapsed - a.t) / (b.t - a.t)));
+        const value = ease(a.ease, raw);
+        let frame = a.frame;
+        let bob = 0;
+        let sway = 0;
+
+        if (a.mode === "walk") {
+          frame = Math.floor((elapsed - a.t) / .28) % 2;
+          bob = Math.sin((elapsed - a.t) * Math.PI / .28) * .28;
+          sway = Math.sin((elapsed - a.t) * Math.PI / .56) * 1.1;
+        } else if (a.mode === "walk-end") {
+          frame = Math.floor((elapsed - a.t) / .3) % 2 ? 1 : 11;
+          bob = Math.sin((elapsed - a.t) * Math.PI / .3) * .24;
+          sway = Math.sin((elapsed - a.t) * Math.PI / .6) * .8;
+        }
+
+        const x = mix(a.x, b.x, value);
+        const y = mix(a.y, b.y, value) + bob;
+        const rotation = mix(a.r, b.r, value) + sway;
+        const scale = mix(a.s, b.s, value);
+        traveler.style.transform = `translate3d(${x}cqw, ${y}cqh, 0) rotate(${rotation}deg) scale(${scale})`;
+        traveler.style.opacity = elapsed < .25 ? String(elapsed / .25) : elapsed > 13.65 ? String((14 - elapsed) / .35) : "1";
+        setFrame(frame);
+        requestAnimationFrame(tick);
+      };
+
+      renderStill();
+      if (!reduced.matches) {
+        start = performance.now();
+        requestAnimationFrame(tick);
+      }
+      reduced.addEventListener("change", () => location.reload(), { once: true });
+    })();
+  </script>
 </body>
 </html>
